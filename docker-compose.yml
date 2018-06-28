@@ -7,7 +7,7 @@ services:
   web:
     image: circleci/ruby:2.4.4-node
     volumes:
-      - .:/app
+      - .:/app:rw
     working_dir: /app
     environment:
       RAILS_ENV: test
