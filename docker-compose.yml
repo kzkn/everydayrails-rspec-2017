@@ -1,6 +1,8 @@
-postgresql:
-  image: postgresql
-  volumes_from:
-    - data-postgresql
-  ports:
-    - "5432:5432"
+version: "2"
+services:
+  postgresql:
+    image: postgresql
+    volumes_from:
+      - data-postgresql
+    ports:
+      - 5432:5432
