@@ -1,0 +1,18 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo Install `date`
+      - bundle install
+  pre_build:
+    commands:
+      - echo Pre build `date`
+      - docker-compose up -d
+      - cp config/database.yml.codebuild config/database.yml
+  build:
+    commands:
+      - echo Build `date`
+      - rspec
+  post_build:
+    commands:
+      - echo Build completed on `date`

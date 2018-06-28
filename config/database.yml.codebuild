@@ -1,0 +1,7 @@
+test:
+  adapter: postgresql
+  encoding: unicode
+  database: everydayrails_test
+  pool: 20
+  username: postgres
+  host: localhost

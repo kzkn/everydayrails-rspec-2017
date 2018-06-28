@@ -1,0 +1,6 @@
+postgresql:
+  image: postgresql
+  volumes_from:
+    - data-postgresql
+  ports:
+    - "5432:5432"
