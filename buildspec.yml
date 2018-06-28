@@ -2,7 +2,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay
+      - /usr/local/bin/dockerd
       - until docker info; do sleep 1; done
       - docker-compose up -d
       - bundle install
