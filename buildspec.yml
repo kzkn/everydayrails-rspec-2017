@@ -7,14 +7,15 @@ phases:
   pre_build:
     commands:
       - echo Pre build `date`
-      - sudo service --status-all
-      - sudo service docker start
-      - /usr/local/bin/docker-compose up -d
+      - ps auxw
+      - docker-compose up -d
       - cp config/database.yml.codebuild config/database.yml
+      - bundle exec rails db:create
+      - bundle exec rails db:schema:load
   build:
     commands:
       - echo Build `date`
-      - rspec
+      - bundle exec rspec
   post_build:
     commands:
       - echo Build completed on `date`
