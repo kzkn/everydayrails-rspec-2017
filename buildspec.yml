@@ -2,7 +2,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - /usr/local/bin/dockerd
+      - dockerd
       - until docker info; do sleep 1; done
       - docker-compose up -d
       - bundle install
