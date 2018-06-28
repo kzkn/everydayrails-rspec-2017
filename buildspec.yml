@@ -2,16 +2,16 @@ version: 0.2
 phases:
   install:
     commands:
-      - docker-compose up -d
-      - docker-compose exec web bundle install --jobs=4 --retry=3
+      - docker-compose run -d db
+      - docker-compose run web bundle install
   pre_build:
     commands:
       - cp config/database.yml.codebuild config/database.yml
-      - docker-compose exec web bundle exec rails db:create
-      - docker-compose exec web bundle exec rails db:schema:load
+      - docker-compose run web bundle exec rails db:create
+      - docker-compose run web bundle exec rails db:schema:load
   build:
     commands:
-      - docker-compose exec web bundle exec rspec
+      - docker-compose run web bundle exec rspec
   post_build:
     commands:
       - echo Done
