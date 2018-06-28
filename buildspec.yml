@@ -3,7 +3,7 @@ phases:
   install:
     commands:
       - docker-compose run -d db
-      - docker-compose run web bundle install
+      - docker-compose run web bundle install --path vendor/bundle
   pre_build:
     commands:
       - cp config/database.yml.codebuild config/database.yml
