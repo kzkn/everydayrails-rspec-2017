@@ -7,6 +7,7 @@ phases:
   pre_build:
     commands:
       - echo Pre build `date`
+      - sudo service docker start
       - docker-compose up -d
       - cp config/database.yml.codebuild config/database.yml
   build:
