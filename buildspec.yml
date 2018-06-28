@@ -3,15 +3,15 @@ phases:
   install:
     commands:
       - echo Install `date`
-      - bundle install
+      # - bundle install
   pre_build:
     commands:
       - echo Pre build `date`
-      - ps auxw
+      # - ps auxw
       - docker-compose up -d
       - cp config/database.yml.codebuild config/database.yml
-      - bundle exec rails db:create
-      - bundle exec rails db:schema:load
+      # - bundle exec rails db:create
+      # - bundle exec rails db:schema:load
   build:
     commands:
       - echo Build `date`
