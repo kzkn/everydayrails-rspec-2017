@@ -2,18 +2,16 @@ version: 0.2
 phases:
   install:
     commands:
-      - dockerd
-      - until docker info; do sleep 1; done
       - docker-compose up -d
-      - bundle install
+      - docker-compose run web bundle install
   pre_build:
     commands:
       - cp config/database.yml.codebuild config/database.yml
-      - bundle exec rails db:create
-      - bundle exec rails db:schema:load
+      - docker-compose run web bundle exec rails db:create
+      - docker-compose run web bundle exec rails db:schema:load
   build:
     commands:
-      - bundle exec rspec
+      - docker-compose run web bundle exec rspec
   post_build:
     commands:
       - echo Done
