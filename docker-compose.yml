@@ -4,16 +4,9 @@ services:
     image: postgres
     ports:
       - 5432:5432
-  web:
-    image: circleci/ruby:2.4.4-node
-    volumes:
-      - .:/app:rw
-    working_dir: /app
-    environment:
-      RAILS_ENV: test
-      TZ: /usr/share/zoneinfo/Asia/Tokyo
-      LANG: ja_JP.UTF-8
-      LC_ALL: C.UTF-8
-      LANGUAGE: ja_JP.UTF-8
+  rails-test:
+    build:
+      context: .
+      dockerfile: dockerfiles/test/Dockerfile
     depends_on:
       - db
