@@ -3,10 +3,10 @@ phases:
   pre_build:
     commands:
       - cp config/database.yml.codebuild config/database.yml
-      - docker-compose build
+      - docker-compose -f ci/docker-compose.yml build
   build:
     commands:
-      - docker-compose up --abort-on-container-exit
+      - docker-compose -f ci/docker-compose.yml up --abort-on-container-exit
   post_build:
     commands:
       - echo Done

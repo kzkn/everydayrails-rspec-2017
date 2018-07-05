@@ -9,7 +9,7 @@ RSpec.feature "Tasks", type: :feature do
   }
   let!(:task) { project.tasks.create!(name: "Finish RSpec tutorial") }
 
-  xscenario "user toggles a task", js: true do
+  scenario "user toggles a task", js: true do
     sign_in user, scope: :user
     go_to_project "RSpec tutorial"
 

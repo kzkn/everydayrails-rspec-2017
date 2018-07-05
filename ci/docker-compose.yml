@@ -6,7 +6,7 @@ services:
       - 5432:5432
   rails-test:
     build:
-      context: .
+      context: ..
       dockerfile: ci/Dockerfile
     depends_on:
       - db
