@@ -6,14 +6,14 @@ ENV LANG=ja_JP.UTF-8
 ENV LC_ALL=C.UTF-8
 ENV LANGUAGE=ja_JP.UTF-8
 
-RUN sudo mkdir /app
-WORKDIR /app
-
-ADD Gemfile /app
-ADD Gemfile.lock /app
+WORKDIR /tmp
+ADD Gemfile /tmp
+ADD Gemfile.lock /tmp
 RUN bundle install -j4
 
+RUN sudo mkdir /app
 COPY . /app
-RUN sudo chown -R `whoami` .
 
-CMD bash -c "bundle exec rails db:create db:schema:load && bundle exec rspec"
+WORKDIR /app
+RUN sudo chown -R `whoami` .
+CMD ./ci/run.sh

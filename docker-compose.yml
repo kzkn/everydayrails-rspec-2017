@@ -7,6 +7,6 @@ services:
   rails-test:
     build:
       context: .
-      dockerfile: dockerfiles/test/Dockerfile
+      dockerfile: ci/Dockerfile
     depends_on:
       - db

@@ -1,10 +1,8 @@
 version: 0.2
 phases:
-  install:
-    commands:
-      - cp config/database.yml.codebuild config/database.yml
   pre_build:
     commands:
+      - cp config/database.yml.codebuild config/database.yml
       - docker-compose build
   build:
     commands:
