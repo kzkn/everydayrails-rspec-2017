@@ -1,20 +1,12 @@
 version: 0.2
 phases:
-  install:
-    commands:
-      - echo Install `date`
-      - bundle install
   pre_build:
     commands:
-      - echo Pre build `date`
-      - sudo service --status-all
-      - sudo service docker start
-      - /usr/local/bin/docker-compose up -d
       - cp config/database.yml.codebuild config/database.yml
+      - docker-compose -f ci/docker-compose.yml build
   build:
     commands:
-      - echo Build `date`
-      - rspec
+      - docker-compose -f ci/docker-compose.yml up --abort-on-container-exit
   post_build:
     commands:
-      - echo Build completed on `date`
+      - echo Done

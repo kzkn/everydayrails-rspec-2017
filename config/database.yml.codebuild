@@ -4,4 +4,4 @@ test:
   database: everydayrails_test
   pool: 20
   username: postgres
-  host: localhost
+  host: db

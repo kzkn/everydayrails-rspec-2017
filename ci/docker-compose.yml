@@ -1,0 +1,12 @@
+version: "2"
+services:
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+  rails-test:
+    build:
+      context: ..
+      dockerfile: ci/Dockerfile
+    depends_on:
+      - db
