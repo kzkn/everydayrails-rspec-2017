@@ -1,5 +1,10 @@
-#!/bin/bash -xe
+#!/bin/bash -x
 
+until pg_isready -q -h db; do
+  sleep 1
+done
+
+set -e
 bundle exec rails db:create
 bundle exec rails db:schema:load
 bundle exec rspec
