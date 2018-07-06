@@ -28,3 +28,4 @@
 
 .ruby-version
 /coverage
+/.test_queue_stats

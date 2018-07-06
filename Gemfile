@@ -19,6 +19,7 @@ group :development, :test do
   gem 'factory_bot_rails', '~> 4.10.0'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'simplecov'
+  gem 'test-queue'
 end
 
 group :development do

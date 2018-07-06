@@ -2,4 +2,4 @@
 
 bundle exec rails db:create
 bundle exec rails db:schema:load
-bundle exec rspec
+bundle exec rspec-queue spec
