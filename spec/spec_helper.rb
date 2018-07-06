@@ -13,6 +13,16 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+if ENV['COVERAGE']
+  require 'simplecov'
+  if ENV['CODEBUILD_SRC_DIR']
+    dir = File.join(ENV['CODEBUILD_SRC_DIR'], 'coverage')
+    SimpleCov.coverage_dir(dir)
+  end
+  SimpleCov.start 'rails'
+end
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

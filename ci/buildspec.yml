@@ -10,3 +10,7 @@ phases:
   post_build:
     commands:
       - echo Done
+
+artifacts:
+  files:
+    - '$CODEBUILD_SRC_DIR/coverage/**/*'
