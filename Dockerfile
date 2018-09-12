@@ -10,7 +10,7 @@ COPY --from=node /usr/local/bin/node /usr/local/bin
 RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
   && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarnpkg
 
-RUN apt-get update && apt-get install -y build-essential libpq-dev openssh-server
+RUN apt-get update && apt-get install -y build-essential libpq-dev openssh-server busybox-static
 
 # Build sshd
 # https://docs.docker.com/engine/examples/running_ssh_service/
@@ -32,7 +32,18 @@ COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 RUN gem install bundler && bundle install -j 4
 
-COPY . /app
-RUN DISABLE_SPRING=1 RAILS_ENV=production bin/rails assets:precompile
+# TODO: define outside of the dockerfile
+ENV SECRET_KEY_BASE=e97eba46e1da7312a6bd9319c7460ec24ba3237d62164acd294c9ad702a5551c91c72ded72f01fd51f7fae50a1c58ceb476f6123bd27105b254f0e9216ea569d \
+    DATABASE_HOST=testdb.cyoxs0qfhdq8.ap-northeast-1.rds.amazonaws.com \
+    DATABASE_NAME=everydayrails \
+    DATABASE_USERNAME=testdb \
+    RAILS_ENV=production \
+    RACK_ENV=production \
+    RAILS_LOG_TO_STDOUT=1 \
+    RAILS_SERVE_STATIC_FILES=1
 
-CMD exec bundle exec rails s -p 3000 -b '0.0.0.0'
+COPY . /app
+RUN RAILS_ENV=production bundle exec rails assets:precompile
+RUN mkdir -p /var/spool/cron/crontabs && bundle exec whenever -i rails -x 'busybox crontab'
+
+CMD ["bundle", "exec", "foreman", "start"]
