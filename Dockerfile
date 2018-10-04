@@ -14,15 +14,14 @@ RUN apt-get update && apt-get install -y build-essential libpq-dev openssh-serve
 
 # Build sshd
 # https://docs.docker.com/engine/examples/running_ssh_service/
-#RUN mkdir /var/run/sshd
-#RUN echo 'root:screencast' | chpasswd
-#RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-#RUN sed -i 's/#PermitRootLogin yes/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN mkdir /var/run/sshd
+RUN echo 'root:screencast' | chpasswd
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
-#RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-#ENV NOTVISIBLE "in users profile"
-#RUN echo "export VISIBLE=now" >> /etc/profile
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
 
 # Build app
 RUN mkdir /app
@@ -42,8 +41,10 @@ ENV SECRET_KEY_BASE=e97eba46e1da7312a6bd9319c7460ec24ba3237d62164acd294c9ad702a5
     RAILS_LOG_TO_STDOUT=1 \
     RAILS_SERVE_STATIC_FILES=1
 
+RUN env | grep -v '^_=' | sed 's/^/export /' >>/root/.bashrc
+
 COPY . /app
 RUN RAILS_ENV=production bundle exec rails assets:precompile
 RUN mkdir -p /var/spool/cron/crontabs && bundle exec whenever -i rails -x 'busybox crontab'
 
-CMD ["bundle", "exec", "foreman", "start"]
+CMD ["sh", "-c", "RAILS_ENV=production bundle exec rails db:migrate && bundle exec foreman start"]
