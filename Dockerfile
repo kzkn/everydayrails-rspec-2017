@@ -31,7 +31,16 @@ COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 RUN gem install bundler && bundle install -j 4
 
-# Copy environment variables for ssh login
+# TODO: define outside of the dockerfile
+ENV SECRET_KEY_BASE=e97eba46e1da7312a6bd9319c7460ec24ba3237d62164acd294c9ad702a5551c91c72ded72f01fd51f7fae50a1c58ceb476f6123bd27105b254f0e9216ea569d \
+    DATABASE_HOST=testdb.cyoxs0qfhdq8.ap-northeast-1.rds.amazonaws.com \
+    DATABASE_NAME=everydayrails \
+    DATABASE_USERNAME=testdb \
+    RAILS_ENV=production \
+    RACK_ENV=production \
+    RAILS_LOG_TO_STDOUT=1 \
+    RAILS_SERVE_STATIC_FILES=1
+
 RUN env | grep -v '^_=' | sed 's/^/export /' >>/root/.bashrc
 
 COPY . /app
