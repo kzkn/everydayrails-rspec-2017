@@ -15,5 +15,8 @@ phases:
     commands:
       - docker push $REPOSITORY_URI
       - echo "[{\"name\":\"${IMAGE_REPO_NAME}\",\"imageUri\":\"${REPOSITORY_URI}\"}]" >imagedefinitions.json
+      - echo "[{\"name\":\"hello\",\"command\":\"bundle exec rake cron:sample2\",\"cron\":\"0/3 * * * * *\"}]" >scheduledtasks.json
 artifacts:
-  files: imagedefinitions.json
+  files:
+    - imagedefinitions.json
+    - scheduledtasks.json
