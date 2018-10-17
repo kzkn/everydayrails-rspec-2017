@@ -35,7 +35,7 @@ ARG SECRET_KEY_BASE
 ARG RAILS_ENV
 
 COPY setenv.sh /root/setenv.sh
-RUN chmod 755 /root/setenv.sh && echo 'source /root/setenv.sh >>/root/.bashrc'
+RUN chmod 755 /root/setenv.sh && echo 'source /root/setenv.sh' >>/root/.bashrc
 
 COPY . /app
 RUN RAILS_ENV=$RAILS_ENV SECRET_KEY_BASE=$SECRET_KEY_BASE bundle exec rails assets:precompile
