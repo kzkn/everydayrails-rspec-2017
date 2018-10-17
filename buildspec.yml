@@ -7,9 +7,7 @@ phases:
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
   build:
     commands:
-      - build_args=`env | tr "\n" " " | sed -e 's/ $//' -e 's/ / --build-arg /g' -e 's/^/--build-arg /'`
-      - echo $build_args
-      - docker build -t everydayrails . `echo $build_args`
+      - docker build -t everydayrails . --build-arg SECRET_KEY_BASE=$SECRET_KEY_BASE --build-arg RAILS_ENV=$RAILS_ENV
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI
   post_build:
     commands:
