@@ -42,5 +42,7 @@ RUN RAILS_ENV=$RAILS_ENV SECRET_KEY_BASE=$SECRET_KEY_BASE bundle exec rails asse
 RUN mkdir -p /var/spool/cron/crontabs && bundle exec whenever -i rails -x 'busybox crontab'
 
 COPY entrypoint.sh /usr/local/bin/
+RUN chmod 755 /usr/local/bin/entrypoint.sh
+
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["bundle", "exec", "foreman", "start"]
