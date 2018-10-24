@@ -5,10 +5,6 @@ const AWS = require('aws-sdk');
 // メモ
 //   同名の rule があってもエラーにならない
 //   同 ID の target があってもエラーにならず、更新してくれる
-//   EcsParameters に LaunchType, NetworkConfiguration, PlatformVersion を指定できない (UnexpectedParameter になる)
-//     定義が間違ってない？
-//     https://github.com/aws/aws-sdk-js/blob/cc29728c1c4178969ebabe3bbe6b6f3159436394/apis/events-2015-10-07.normal.json
-//     issue あげた https://github.com/aws/aws-sdk-js/issues/2317
 exports.handler = function(event, context) {
   const events = new AWS.CloudWatchEvents();
   // put-rule
@@ -56,11 +52,11 @@ exports.handler = function(event, context) {
             NetworkConfiguration: {
               awsvpcConfiguration: {
                 AssignPublicIp: 'ENABLED',
-                SecurityGroups: serviceSecurityGroup,
+                SecurityGroups: [serviceSecurityGroup],
                 Subnets: clusterSubnets,
               }
             },
-            PlatformVersion: '1.2.0'
+            PlatformVersion: 'LATEST'
           }
         }
       ]
