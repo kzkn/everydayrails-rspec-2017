@@ -1,10 +1,12 @@
 const AWS = require('aws-sdk');
+const AdmZip = require('adm-zip');
 
 class Client {
   constructor(job) {
     this.ecs = new AWS.ECS();
     this.events = new AWS.CloudWatchEvents();
     this.codepipeline = new AWS.CodePipeline();
+    this.s3 = new AWS.S3();
     this.job = job;
   }
 
@@ -42,14 +44,30 @@ class Client {
 
   schedulingTasks() {
     return new Promise((resolve, reject) => {
-      // TODO unzip artifact
-      const tasks = [
-        { name: 'hoge', rule: '0 20 * * ? *', task: 'cron:sample2' },
-        { name: 'fuga', rule: '1 20 * * ? *', task: 'cron:sample2' }
-      ];
-      resolve(tasks);
-    })
-    return ;
+      const { bucketName, objectKey } = this.job.data.inputArtifacts[0].location.s3Location;
+      const params = {
+        Bucket: bucketName,
+        Key: objectKey
+      };
+      this.s3.getObject(params, (err, data) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        try {
+          const zip = new AdmZip(data.Body);
+          const json = zip.readAsText('scheduledtasks.json');
+          resolve(JSON.parse(json));
+          // TODO: 仮
+          /* const tasks = JSON.parse(json);
+           * tasks[0] = Object.assign({}, tasks[0], { cron: '2 22 * * ? *' });
+           * resolve(tasks); */
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
   }
 
   putSchedulingTask(targetParams, task) {
@@ -60,7 +78,7 @@ class Client {
     return new Promise((resolve, reject) => {
       const params = {
         Name: task['name'],
-        ScheduleExpression: `cron(${task['rule']})`,
+        ScheduleExpression: `cron(${task['cron']})`,
         State: 'ENABLED'
       }
       this.events.putRule(params, (err, data) => {
