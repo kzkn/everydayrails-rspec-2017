@@ -57,12 +57,11 @@ class Client {
 
         try {
           const zip = new AdmZip(data.Body);
-          const json = zip.readAsText('scheduledtasks.json');
+          zip.getEntries().forEach(e => {
+            console.log(e.toString());
+          });
+          const json = zip.readAsText('config/schedule.json');
           resolve(JSON.parse(json));
-          // TODO: 仮
-          /* const tasks = JSON.parse(json);
-           * tasks[0] = Object.assign({}, tasks[0], { cron: '2 22 * * ? *' });
-           * resolve(tasks); */
         } catch (e) {
           reject(e);
         }
