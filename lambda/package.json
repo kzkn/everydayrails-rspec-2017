@@ -1,0 +1,10 @@
+{
+  "name": "deploy-ecs-scheduler",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "adm-zip": "^0.4.11",
+    "aws-sdk": "^2.341.0"
+  }
+}
