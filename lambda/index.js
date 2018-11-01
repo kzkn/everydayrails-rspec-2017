@@ -16,24 +16,29 @@ class Client {
   }
 
   getScheduledTaskTargetParams() {
-    const params = {
-      cluster: this.clusterName(),
-      services: ['rails']
-    };
     return new Promise((resolve, reject) => {
+      const params = {
+        cluster: this.clusterName(),
+        services: ['rails']
+      };
+      console.log(`ECS.describeServices: ${params}`);
       this.ecs.describeServices(params, (err, data) => {
         if (err) {
+          console.error(`Error on ECS.describeServices: ${err}`);
           reject(err);
           return;
         }
 
         const { services } = data;
         if (!services || services.length === 0) {
+          console.error(`No rails service in cluster ${this.clusterName()}`);
           reject(`No rails service in cluster ${this.clusterName()}`);
           return;
         }
 
         const service = services[0];
+        console.log(`ECS.describeServices: ${JSON.stringify(service)}`);
+
         const { clusterArn, platformVersion, taskDefinition, networkConfiguration: { awsvpcConfiguration } } = service;
         const { subnets, securityGroups } = awsvpcConfiguration;
         const eventsArn = process.env.EVENTS_ROLE;
@@ -49,17 +54,21 @@ class Client {
         Bucket: bucketName,
         Key: objectKey
       };
+      console.log(`S3.getObject: ${params}`);
       this.s3.getObject(params, (err, data) => {
         if (err) {
+          console.error(`Error on S3.getObject: ${err}`);
           reject(err);
           return;
         }
 
+        console.log(`S3.getObject: ${data}`);
         try {
           const zip = new AdmZip(data.Body);
           const json = zip.readAsText('config/schedule.json');
           resolve(JSON.parse(json));
         } catch (e) {
+          console.error(`unzip or JSON.parse: ${e}`);
           reject(e);
         }
       });
@@ -76,13 +85,16 @@ class Client {
         Name: task['name'],
         ScheduleExpression: `cron(${task['cron']})`,
         State: 'ENABLED'
-      }
+      };
+      console.log(`CloudWatchEvents.putRule: ${params}`);
       this.events.putRule(params, (err, data) => {
         if (err) {
+          console.log(`Error on CloudWatchEvents.putRule: ${err}`);
           reject(err);
           return;
         }
 
+        console.log(`CloudWatchEvents.putRule: ${JSON.stringify(data)}`);
         resolve(data['RuleArn']);
       })
     })
@@ -97,7 +109,7 @@ class Client {
             command: ['bundle', 'exec', 'rake', task['task']]
           }
         ]
-      }
+      };
       const params = {
         Rule: task['name'],
         Targets: [
@@ -121,19 +133,23 @@ class Client {
             }
           }
         ]
-      }
+      };
 
+      console.log(`CloudWatchEvents.putTargets: ${params}`);
       this.events.putTargets(params, (err, data) => {
         if (err) {
+          console.error(`Error on CloudWatchEvents.putTargets: ${err}`);
           reject(err);
           return;
         }
 
         if (data['FailedEntryCount'] > 0) {
+          console.error(`CloudWatchEvents.putTargets: failed. ${JSON.stringify(data)}`);
           reject(data['FailedEntries']);
           return;
         }
 
+        console.error('CloudWatchEvents.putTargets: done');
         resolve();
       })
     })
@@ -141,9 +157,15 @@ class Client {
 
   notifyJobSuccess() {
     return new Promise((resolve, reject) => {
+      console.log(`CodePipeline.putJobSuccessResult: ${this.job.id}`);
       this.codepipeline.putJobSuccessResult({ jobId: this.job.id }, (err, data) => {
-        if (err) reject(err);
-        else resolve();
+        if (err) {
+          console.error(`Error on CodePipeline.putJobSuccessResult: ${err}`);
+          reject(err);
+        } else {
+          console.log(`CodePipeline.putJobSuccessResult: ${JSON.stringify(data)}`);
+          resolve();
+        }
       })
     })
   }
@@ -158,7 +180,9 @@ class Client {
           externalExecutionId: contextId
         }
       }
+      console.log(`CodePipeline.putJobSuccessResult: ${params}`);
       this.codepipeline.putJobFailureResult(params, (err, data) => {
+        console.log(`CodePipeline.putJobFailureResult: err=${err}, data=${JSON.stringify(data)}`);
         resolve();
       })
     })
@@ -167,6 +191,8 @@ class Client {
 
 exports.handler = function(event, context) {
   const job = event['CodePipeline.job'];
+  console.log(`CodePipeline job id: ${job.id}`);
+
   const client = new Client(job);
   Promise
     .all([client.getScheduledTaskTargetParams(), client.schedulingTasks()])
