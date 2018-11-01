@@ -21,10 +21,10 @@ class Client {
         cluster: this.clusterName(),
         services: ['rails']
       };
-      console.log(`ECS.describeServices: ${params}`);
+      console.log(`ECS.describeServices: ${JSON.stringify(params)}`);
       this.ecs.describeServices(params, (err, data) => {
         if (err) {
-          console.error(`Error on ECS.describeServices: ${err}`);
+          console.error(`Error on ECS.describeServices: ${JSON.stringify(err)}`);
           reject(err);
           return;
         }
@@ -54,15 +54,15 @@ class Client {
         Bucket: bucketName,
         Key: objectKey
       };
-      console.log(`S3.getObject: ${params}`);
+      console.log(`S3.getObject: ${JSON.stringify(params)}`);
       this.s3.getObject(params, (err, data) => {
         if (err) {
-          console.error(`Error on S3.getObject: ${err}`);
+          console.error(`Error on S3.getObject: ${JSON.stringify(err)}`);
           reject(err);
           return;
         }
 
-        console.log(`S3.getObject: ${data}`);
+        console.log(`S3.getObject: ${JSON.stringify(data)}`);
         try {
           const zip = new AdmZip(data.Body);
           const json = zip.readAsText('config/schedule.json');
@@ -86,10 +86,10 @@ class Client {
         ScheduleExpression: `cron(${task['cron']})`,
         State: 'ENABLED'
       };
-      console.log(`CloudWatchEvents.putRule: ${params}`);
+      console.log(`CloudWatchEvents.putRule: ${JSON.stringify(params)}`);
       this.events.putRule(params, (err, data) => {
         if (err) {
-          console.log(`Error on CloudWatchEvents.putRule: ${err}`);
+          console.log(`Error on CloudWatchEvents.putRule: ${JSON.stringify(err)}`);
           reject(err);
           return;
         }
@@ -135,10 +135,10 @@ class Client {
         ]
       };
 
-      console.log(`CloudWatchEvents.putTargets: ${params}`);
+      console.log(`CloudWatchEvents.putTargets: ${JSON.stringify(params)}`);
       this.events.putTargets(params, (err, data) => {
         if (err) {
-          console.error(`Error on CloudWatchEvents.putTargets: ${err}`);
+          console.error(`Error on CloudWatchEvents.putTargets: ${JSON.stringify(err)}`);
           reject(err);
           return;
         }
@@ -149,7 +149,7 @@ class Client {
           return;
         }
 
-        console.error('CloudWatchEvents.putTargets: done');
+        console.log('CloudWatchEvents.putTargets: done');
         resolve();
       })
     })
@@ -160,7 +160,7 @@ class Client {
       console.log(`CodePipeline.putJobSuccessResult: ${this.job.id}`);
       this.codepipeline.putJobSuccessResult({ jobId: this.job.id }, (err, data) => {
         if (err) {
-          console.error(`Error on CodePipeline.putJobSuccessResult: ${err}`);
+          console.error(`Error on CodePipeline.putJobSuccessResult: ${JSON.stringify(err)}`);
           reject(err);
         } else {
           console.log(`CodePipeline.putJobSuccessResult: ${JSON.stringify(data)}`);
@@ -180,7 +180,7 @@ class Client {
           externalExecutionId: contextId
         }
       }
-      console.log(`CodePipeline.putJobSuccessResult: ${params}`);
+      console.log(`CodePipeline.putJobSuccessResult: ${JSON.stringify(params)}`);
       this.codepipeline.putJobFailureResult(params, (err, data) => {
         console.log(`CodePipeline.putJobFailureResult: err=${err}, data=${JSON.stringify(data)}`);
         resolve();
