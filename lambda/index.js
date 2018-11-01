@@ -57,9 +57,6 @@ class Client {
 
         try {
           const zip = new AdmZip(data.Body);
-          zip.getEntries().forEach(e => {
-            console.log(e.toString());
-          });
           const json = zip.readAsText('config/schedule.json');
           resolve(JSON.parse(json));
         } catch (e) {
