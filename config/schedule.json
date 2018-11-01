@@ -1,0 +1,12 @@
+[
+  {
+    "name": "hello",
+    "task": "cron:sample2",
+    "cron": "0/3 * * * ? *"
+  },
+  {
+    "name": "hello every hour",
+    "task": "cron:sample2",
+    "cron": "10 * * * ? *"
+  }
+]
